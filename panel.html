@@ -1,0 +1,728 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hopto Hosting - Kezelő Panel</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #eef2f7;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+            color: #333;
+        }
+        .container {
+            background-color: #ffffff;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 650px;
+            box-sizing: border-box;
+        }
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.4em;
+            font-weight: 600;
+        }
+        .section {
+            margin-bottom: 35px;
+            padding: 25px;
+            border: 1px solid #e0e6ec;
+            border-radius: 8px;
+            background-color: #fcfdff;
+            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.05);
+        }
+        .section h2 {
+            margin-top: 0;
+            color: #007bff;
+            border-bottom: 2px solid #e0e6ec;
+            padding-bottom: 15px;
+            margin-bottom: 25px;
+            font-size: 1.6em;
+            font-weight: 600;
+        }
+        .status-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+            font-size: 1.1em;
+            padding: 8px 0;
+            border-bottom: 1px dashed #eee;
+        }
+        .status-item:last-child {
+            border-bottom: none;
+        }
+        .status-label {
+            font-weight: 700;
+            color: #34495e;
+        }
+        .status-value {
+            font-weight: 700;
+            color: #007bff;
+        }
+        .status-value.online { color: #28a745; }
+        .status-value.offline { color: #dc3545; }
+        .status-value.unknown { color: #ffc107; }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #34495e;
+            font-weight: 600;
+            font-size: 0.95em;
+        }
+        input[type="text"],
+        input[type="password"] {
+            width: calc(100% - 22px);
+            padding: 12px;
+            margin-bottom: 25px;
+            border: 1px solid #ced4da;
+            border-radius: 6px;
+            font-size: 1em;
+            box-sizing: border-box;
+            transition: border-color 0.2s;
+        }
+        input[type="text"]:focus,
+        input[type="password"]:focus {
+            border-color: #007bff;
+            outline: none;
+            box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+        }
+        .domain-display {
+            display: flex;
+            align-items: center;
+            margin-bottom: 25px;
+            border: 1px solid #ced4da;
+            border-radius: 6px;
+            padding: 10px 12px;
+            background-color: #f8f9fa;
+        }
+        .domain-display span {
+            font-size: 1.1em;
+            color: #555;
+            white-space: nowrap;
+        }
+        .domain-display input {
+            border: none;
+            outline: none;
+            background: none;
+            padding: 0;
+            margin-right: 5px;
+            font-size: 1.1em;
+            flex-grow: 1;
+            box-shadow: none;
+            width: auto;
+            margin-bottom: 0;
+        }
+        p strong {
+            color: #007bff;
+            font-weight: 700;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            padding: 14px 25px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            width: 100%;
+            font-size: 1.1em;
+            font-weight: 600;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            margin-top: 15px;
+        }
+        button.start-button {
+            background-color: #28a745;
+        }
+        button.start-button:hover {
+            background-color: #218838;
+        }
+        button.delete-button {
+            background-color: #dc3545;
+            margin-top: 10px;
+        }
+        button.delete-button:hover {
+            background-color: #c82333;
+        }
+        button:hover {
+            background-color: #0056b3;
+            transform: translateY(-2px);
+        }
+        button:active {
+            transform: translateY(0);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+        button:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+            transform: translateY(0);
+            box-shadow: none;
+        }
+        .message {
+            margin-top: 25px;
+            padding: 15px;
+            border-radius: 6px;
+            text-align: center;
+            font-size: 0.95em;
+            font-weight: 500;
+        }
+        .message.success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .message.error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .message.info {
+            background-color: #e0f2f7;
+            color: #31708f;
+            border: 1px solid #b3e0ff;
+        }
+        .loading-spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #3498db;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            animation: spin 2s linear infinite;
+            display: inline-block;
+            vertical-align: middle;
+            margin-left: 10px;
+            display: none;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .info-box {
+            background-color: #e0f2f7;
+            border: 1px solid #b3e0ff;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 30px;
+            font-size: 0.9em;
+            line-height: 1.6;
+            color: #2c3e50;
+            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.05);
+        }
+        .info-box p:last-child {
+            margin-bottom: 0;
+        }
+        .info-box a {
+            color: #007bff;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        .info-box a:hover {
+            text-decoration: underline;
+        }
+        /* Szekciók vezérlése */
+        #requestSubdomainSection {
+            display: block;
+        }
+        #botControlSection {
+            display: none;
+        }
+        .code-info-message {
+            background-color: #f0f8ff;
+            border: 1px solid #cceeff;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 20px;
+            font-size: 1.1em;
+            font-weight: bold;
+            color: #0056b3;
+            text-align: center;
+        }
+        /* ÚJ STÍLUS a kódmező és indító gomb elrejtéséhez */
+        .hidden-on-active {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Üdvözlünk a Hopto Hosting Kezelőpanelen!</h1>
+        <p>Örülünk, hogy minket választottál. A mi célunk az aldomain cimek biztositása.</p>
+        <p>A Bérlés elkezdésével elfogadod a szabályzatunkat és hasonlókat.</p>
+        <p>Bármilyen kérdés vagy probléma esetén jelezd itt:https://discord.gg/ZB7Y2nARqb</p>
+
+        <div class="section" id="requestSubdomainSection">
+            <h2>Aldomain cim igénylése</h2>
+            <form id="domainRequestForm">
+                <p>Kérjük, add meg Discord felhasználónevedet és a kívánt Domain cimet.</p>
+                <label for="discordUsernameRequest">Discord Felhasználónév:</label>
+                <input type="text" id="discordUsernameRequest" name="discordUsernameRequest" placeholder="felhasználó#1" required>
+
+                <label for="desiredSubdomainRequest">Domain cim neve Például: (szerverem)</label>
+                <div class="domain-display">
+                    <input type="text" id="desiredSubdomainRequest" name="desiredSubdomainRequest" placeholder="pl. 'botom'" required oninput="updateDomainPreview()">
+                    <span>.hopto.org</span>
+                </div>
+
+                <p>Teljes domain cimed így fog kinézni: <strong id="domainPreview">.hopto.org</strong></p>
+
+                <button type="submit" id="requestDomainButton">Domain igénylése</button>
+                <div id="domainRequestMessage" class="message" style="display: none;"></div>
+                <div id="codeInfoMessage" class="code-info-message" style="display: none;">
+                    <p>Az igénylésedet sikeresen elküldtük! **Az aktiváló kódodat a Discord szerverünkön tudod elkérni**.</p>
+                    <p>Ezt a kódot tudod majd felhasználni az alábbi "Bot Indítása" szekcióban.</p>
+                    <button type="button" id="continueToPanelButton" style="margin-top: 15px;">Tovább a bot kezeléséhez</button>
+                </div>
+            </form>
+        </div>
+
+        <div class="section" id="botControlSection">
+            <h2>Bot Státusz</h2>
+            <div class="status-item">
+                <span class="status-label">Bot státusz:</span>
+                <span id="botStatus" class="status-value unknown">Betöltés...</span>
+            </div>
+            <div class="status-item">
+                <span class="status-label">Kezelt alosztály:</span>
+                <span id="subdomainDisplay" class="status-value"></span>
+            </div>
+            <button id="refreshStatusButton">Státusz frissítése</button>
+
+            <hr style="margin: 25px 0;">
+
+            <h2>Bot Indítása / Törlése</h2>
+            <form id="botControlForm">
+                <div id="activationControls">
+                    <p>Add meg itt az aktiváló kódot, amit a Discord szerverünkön kaptál a domaincimedhez. Ezzel tudod majd elindítani a botodat.</p>
+                    <label for="activationCode">Aktiváló kód:</label>
+                    <input type="password" id="activationCode" name="activationCode" placeholder="Írd be az aktiváló kódot" required>
+
+                    <button type="submit" id="startButton" class="start-button">
+                        Bot indítása
+                        <span id="loadingSpinner" class="loading-spinner"></span>
+                    </button>
+                </div>
+                
+                <button type="button" id="deleteButton" class="delete-button">
+                    Bot törlése
+                </button>
+                <div id="controlMessage" class="message" style="display: none;"></div>
+            </form>
+        </div>
+
+        <div class="info-box">
+            <p><strong>Fontos információ:</strong></p>
+            <p>Minden esetben a Discord szerverünkön keresztül tudsz kommunikálni a Hopto Hosting csapatával, ha kérdésed van a domain cim igényléssel vagy a botod kezelésével kapcsolatban.</p>
+            <p><a href="https://discord.gg/ZB7Y2nARqb" target="_blank">Csatlakozz Discord szerverünkhöz!</a></p>
+        </div>
+    </div>
+
+    <script>
+        // --- KONFIGURÁCIÓ ---
+        const WEBHOOK_URL = 'https://discord.com/api/webhooks/1390991313482154044/3ChY3KecTDl2IVK9axkEtipy7TIKcObyBqvEsn16_6P_ezg3me1DALXPW4s8uptJBdz_';
+        const DISCORD_INVITE_URL = 'https://discord.gg/PttMseBZ5U';
+        const BASE_DOMAIN = '.hopto.org';
+        const YOUR_BACKEND_API_URL = 'http://localhost:3000/api'; // Ez a backend API URL-je lenne (marad a dummy)
+
+        // --- DOM elemek ---
+        const requestSubdomainSection = document.getElementById('requestSubdomainSection');
+        const botControlSection = document.getElementById('botControlSection');
+
+        const domainRequestForm = document.getElementById('domainRequestForm');
+        const discordUsernameRequestInput = document.getElementById('discordUsernameRequest');
+        const desiredSubdomainRequestInput = document.getElementById('desiredSubdomainRequest');
+        const domainPreview = document.getElementById('domainPreview');
+        const requestDomainButton = document.getElementById('requestDomainButton');
+        const domainRequestMessageDiv = document.getElementById('domainRequestMessage');
+        const codeInfoMessage = document.getElementById('codeInfoMessage');
+        const continueToPanelButton = document.getElementById('continueToPanelButton');
+
+        const botStatusElem = document.getElementById('botStatus');
+        const subdomainDisplayElem = document.getElementById('subdomainDisplay');
+        const refreshStatusButton = document.getElementById('refreshStatusButton');
+        const botControlForm = document.getElementById('botControlForm');
+        const activationCodeInput = document.getElementById('activationCode');
+        const startButton = document.getElementById('startButton');
+        const deleteButton = document.getElementById('deleteButton');
+        const loadingSpinner = document.getElementById('loadingSpinner');
+        const controlMessageDiv = document.getElementById('controlMessage');
+        const activationControlsDiv = document.getElementById('activationControls');
+
+        let lastGeneratedCode = null; // A generált kód tárolására, a demóhoz
+
+        // --- Segéd Függvények ---
+        function generateRandomCode(length = 5) {
+            const characters = '0123456789';
+            let result = '';
+            const charactersLength = characters.length;
+            for (let i = 0; i < length; i++) {
+                result += characters.charAt(Math.floor(Math.random() * charactersLength));
+            }
+            return result;
+        }
+
+        function updateDomainPreview() {
+            const subdomain = desiredSubdomainRequestInput.value.trim().toLowerCase().replace(/[^a-z0-9-]/g, '');
+            desiredSubdomainRequestInput.value = subdomain;
+            domainPreview.textContent = subdomain ? `${subdomain}${BASE_DOMAIN}` : BASE_DOMAIN;
+        }
+
+        function showMessage(divElement, msg, type) {
+            divElement.textContent = msg;
+            divElement.className = `message ${type}`;
+            divElement.style.display = 'block';
+        }
+
+        // --- Alosztály Igénylés Funkció ---
+        async function sendDomainRequest(username, desiredSubdomain) {
+            requestDomainButton.disabled = true;
+            showMessage(domainRequestMessageDiv, 'Igénylés küldése...', 'info');
+            codeInfoMessage.style.display = 'none';
+
+            const fullDomain = `${desiredSubdomain}${BASE_DOMAIN}`;
+            const generatedCode = generateRandomCode(5);
+
+            lastGeneratedCode = generatedCode;
+            // Ezt tároljuk el ideiglenesen a demóhoz, hogy lehessen ellenőrizni
+            sessionStorage.setItem('lastGeneratedCodeForDemo', generatedCode);
+            localStorage.setItem('lastGeneratedCodeForDemo', generatedCode); // Perzisztensen is
+
+            const payload = {
+                content: `**Új jelentkezés!**`,
+                embeds: [
+                    {
+                        title: "Hopto - Domainok",
+                        description: `**Discord Felhasználónév:** ${username}\n**Kért alosztály:** \`${fullDomain}\`\n**Aktiváló Kód ehhez az igényléshez (Admin infó):** \`${generatedCode}\``,
+                        color: 3447003,
+                        fields: [
+                            {
+                                name: "Következő Lépések",
+                                value: `Kérjük, ellenőrizzétek az igénylést. **Ez a felhasználó várja majd tőletek, hogy az alább megadott kódot \`${generatedCode}\` átadjátok neki a Discord szerveren.** Ezt a kódot fogja használni a panelen a botja indításához, miután beállítottátok neki az alosztályt. Lépjetek kapcsolatba vele a **Discord szerverünkön**: ${DISCORD_INVITE_URL}`
+                            }
+                        ],
+                        footer: {
+                            text: "Hopto Hosting - Alosztály Igénylés"
+                        },
+                        timestamp: new Date().toISOString()
+                    }
+                ]
+            };
+
+            try {
+                const response = await fetch(WEBHOOK_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(payload),
+                });
+
+                if (response.ok) {
+                    showMessage(domainRequestMessageDiv, 'Az igénylésedet sikeresen elküldtük!', 'success');
+                    codeInfoMessage.style.display = 'block';
+                    domainRequestForm.reset();
+                    updateDomainPreview();
+
+                    // Csak az alosztály nevét mentjük el, a kód érvényesítését még nem.
+                    sessionStorage.setItem('currentManagedSubdomain', desiredSubdomain);
+                    localStorage.setItem('currentManagedSubdomain', desiredSubdomain);
+
+                    // A "hasEnteredCode" NEM ITT állítódik TRUE-ra!
+                    // localStorage.setItem('hasEnteredCode', 'true'); // <-- EZ KI LETT VÉVE INNEN
+
+                } else {
+                    const errorText = await response.text();
+                    console.error('Hiba a Discord webhook küldésekor:', response.status, errorText);
+                    showMessage(domainRequestMessageDiv, 'Hiba történt az igénylés elküldésekor. Kérjük, próbáld újra később, vagy keresd fel a Discord szerverünket!', 'error');
+                }
+            } catch (error) {
+                console.error('Hálózati hiba:', error);
+                showMessage(domainRequestMessageDiv, 'Hálózati hiba történt. Kérjük, ellenőrizd az internetkapcsolatodat!', 'error');
+            } finally {
+                requestDomainButton.disabled = false;
+            }
+        }
+
+        // --- Bot Státusz és Kontroll Funkciók (Backendet igénylő dummy funkciók) ---
+        async function fetchBotStatus() {
+            botStatusElem.textContent = 'Lekérdezés...';
+            botStatusElem.className = 'status-value unknown';
+
+            const storedSubdomain = localStorage.getItem('currentManagedSubdomain');
+            if (storedSubdomain) {
+                subdomainDisplayElem.textContent = `${storedSubdomain}${BASE_DOMAIN}`;
+            } else {
+                subdomainDisplayElem.textContent = 'Nincs beállított alosztály';
+                // Ha nincs alosztály a localStorage-ban, akkor vissza az igénylő felületre
+                requestSubdomainSection.style.display = 'block';
+                botControlSection.style.display = 'none';
+                return;
+            }
+
+            try {
+                await new Promise(resolve => setTimeout(resolve, 1000));
+                const randomStatus = Math.random() < 0.5 ? 'running' : 'stopped'; // Dummy státusz
+                if (randomStatus === 'running') {
+                    botStatusElem.textContent = 'Fut';
+                    botStatusElem.className = 'status-value online';
+                } else {
+                    botStatusElem.textContent = 'Leállítva';
+                    botStatusElem.className = 'status-value offline';
+                }
+            } catch (error) {
+                console.error('Hiba a státusz lekérdezésekor:', error);
+                botStatusElem.textContent = 'Hiba';
+                botStatusElem.className = 'status-value unknown';
+            }
+        }
+
+        async function sendBotStartWebhook(subdomain) {
+            const payload = {
+                content: `**Bot indítási kísérlet történt!**`,
+                embeds: [
+                    {
+                        title: "Bot Indítás",
+                        description: `**Domain:** \`${subdomain}${BASE_DOMAIN}\`\n**Státusz:** Sikeres indítási parancs elküldve.`,
+                        color: 65280,
+                        footer: {
+                            text: "Hopto Hosting - Bot Értesítés"
+                        },
+                        timestamp: new Date().toISOString()
+                    }
+                ]
+            };
+
+            try {
+                const response = await fetch(WEBHOOK_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(payload),
+                });
+                if (!response.ok) {
+                    console.error('Hiba a bot indítási webhook küldésekor:', response.status, await response.text());
+                }
+            } catch (error) {
+                console.error('Hálózati hiba a bot indítási webhook küldésekor:', error);
+            }
+        }
+
+        async function sendBotDeleteWebhook(subdomain) {
+            // A natív confirm ablak megerősítése
+            if (!confirm(`Biztosan törölni szeretnéd a ${subdomain}${BASE_DOMAIN} alosztályhoz tartozó botot és minden adatát? Ez visszavonhatatlan!`)) {
+                return;
+            }
+
+            deleteButton.disabled = true;
+            showMessage(controlMessageDiv, 'Törlés kérése elküldve...', 'info');
+
+            const payload = {
+                content: `**Bot TÖRLÉSI KÉRÉS érkezett!**`,
+                embeds: [
+                    {
+                        title: "Bot Törlés",
+                        description: `**Alosztály:** \`${subdomain}${BASE_DOMAIN}\`\n**Státusz:** Törlésre jelölve. Kérjük, távolítsátok el a botot és az alosztályt.`,
+                        color: 16711680,
+                        footer: {
+                            text: "Hopto Hosting - Bot Értesítés"
+                        },
+                        timestamp: new Date().toISOString()
+                    }
+                ]
+            };
+
+            try {
+                const response = await fetch(WEBHOOK_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(payload),
+                });
+
+                if (response.ok) {
+                    showMessage(controlMessageDiv, `Törlési kérelem sikeresen elküldve a ${subdomain}${BASE_DOMAIN} alosztályhoz!`, 'success');
+                    // Törlés után töröljük a localStorage-ból is az adatokat
+                    localStorage.removeItem('currentManagedSubdomain');
+                    localStorage.removeItem('lastGeneratedCodeForDemo');
+                    localStorage.removeItem('hasEnteredCode'); // EZ IS TÖRÖLVE LESZ
+
+                    // Vissza az alosztály igénylő részhez
+                    requestSubdomainSection.style.display = 'block';
+                    botControlSection.style.display = 'none';
+                    domainRequestForm.reset();
+                    updateDomainPreview();
+                    showMessage(domainRequestMessageDiv, 'A botod törlési kérelme sikeresen elküldve. Most új alosztályt igényelhetsz.', 'info');
+                    controlMessageDiv.style.display = 'none';
+                    
+                    // Újra megjelenítjük a kódmezőt és az indító gombot törlés után
+                    activationControlsDiv.classList.remove('hidden-on-active');
+
+                } else {
+                    const errorText = await response.text();
+                    console.error('Hiba a bot törlési webhook küldésekor:', response.status, errorText);
+                    showMessage(controlMessageDiv, 'Hiba történt a törlési kérelem elküldésekor. Kérjük, próbáld újra később, vagy keresd fel a Discord szerverünket!', 'error');
+                }
+            } catch (error) {
+                console.error('Hálózati hiba a bot törlési webhook küldésekor:', error);
+                showMessage(controlMessageDiv, 'Hálózati hiba történt a törlési kérelem elküldésekor.', 'error');
+            } finally {
+                deleteButton.disabled = false;
+            }
+        }
+
+        async function startBot(activationCode) {
+            startButton.disabled = true;
+            loadingSpinner.style.display = 'inline-block';
+            showMessage(controlMessageDiv, 'Indítás folyamatban...', 'info');
+
+            const storedSubdomain = localStorage.getItem('currentManagedSubdomain');
+            if (!storedSubdomain) {
+                showMessage(controlMessageDiv, 'Kérjük, előbb igényeljen egy alosztályt!', 'error');
+                startButton.disabled = false;
+                loadingSpinner.style.display = 'none';
+                return;
+            }
+
+            const expectedCode = localStorage.getItem('lastGeneratedCodeForDemo'); // Az admin által adott kód
+            if (activationCode !== expectedCode) {
+                showMessage(controlMessageDiv, 'Helytelen aktiváló kód! Kérjük, ellenőrizze, vagy kérjen újat a Discord szerveren.', 'error');
+                startButton.disabled = false;
+                loadingSpinner.style.display = 'none';
+                return;
+            }
+
+            try {
+                await new Promise(resolve => setTimeout(resolve, 2000)); // Dummy késleltetés
+
+                showMessage(controlMessageDiv, `Bot sikeresen elindítva a ${storedSubdomain}${BASE_DOMAIN} címen!`, 'success');
+                fetchBotStatus();
+
+                await sendBotStartWebhook(storedSubdomain);
+
+                // ITT ÁLLÍTJUK BE A hasEnteredCode-ot TRUE-ra!
+                localStorage.setItem('hasEnteredCode', 'true'); 
+                // Sikeres indítás után elrejtjük a kódmezőt és az indító gombot
+                activationControlsDiv.classList.add('hidden-on-active');
+
+
+            } catch (error) {
+                console.error('Hálózati hiba a bot indításakor:', error);
+                showMessage(controlMessageDiv, 'Hálózati hiba történt a bot indításakor.', 'error');
+            } finally {
+                startButton.disabled = false;
+                loadingSpinner.style.display = 'none';
+            }
+        }
+
+        // --- Eseménykezelők ---
+        domainRequestForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const username = discordUsernameRequestInput.value.trim();
+            const desiredSubdomain = desiredSubdomainRequestInput.value.trim().toLowerCase().replace(/[^a-z0-9-]/g, '');
+
+            if (!username) {
+                showMessage(domainRequestMessageDiv, 'Kérjük, add meg a Discord felhasználónevedet!', 'error');
+                return;
+            }
+            if (!desiredSubdomain) {
+                showMessage(domainRequestMessageDiv, 'Kérjük, add meg a kívánt alosztályt!', 'error');
+                return;
+            }
+            if (desiredSubdomain.length < 3) {
+                showMessage(domainRequestMessageDiv, 'Az alosztálynak legalább 3 karakter hosszúnak kell lennie!', 'error');
+                return;
+            }
+            if (!/^[a-z0-9-]+$/.test(desiredSubdomain)) {
+                showMessage(domainRequestMessageDiv, 'Az alosztály csak kisbetűket, számokat és kötőjelet tartalmazhat!', 'error');
+                return;
+            }
+
+            await sendDomainRequest(username, desiredSubdomain);
+        });
+
+        continueToPanelButton.addEventListener('click', () => {
+            // A hasEnteredCode-ot NEM itt állítjuk be, csak simán váltunk a panelre
+            // localStorage.setItem('hasEnteredCode', 'true'); // <-- EZ KI LETT VÉVE INNEN
+            displayPanelForManagedSubdomain();
+            // Az aktiváló vezérlők itt még láthatóak maradnak, amíg a kód nincs beírva.
+            // activationControlsDiv.classList.add('hidden-on-active'); // <-- EZ KI LETT VÉVE INNEN
+        });
+
+        refreshStatusButton.addEventListener('click', fetchBotStatus);
+
+        botControlForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            // Csak akkor próbáljuk indítani a botot, ha az aktiváló mezők láthatóak (azaz még nem írták be a kódot)
+            if (!activationControlsDiv.classList.contains('hidden-on-active')) {
+                const code = activationCodeInput.value.trim();
+                if (code) {
+                    await startBot(code);
+                } else {
+                    showMessage(controlMessageDiv, 'Kérjük, add meg az aktiváló kódot!', 'error');
+                }
+            } else {
+                // Ha már rejtve van, akkor a form submit nem tesz semmit, mivel a bot elvileg már fut.
+                e.preventDefault();
+            }
+        });
+
+        deleteButton.addEventListener('click', async () => {
+            const storedSubdomain = localStorage.getItem('currentManagedSubdomain');
+            if (storedSubdomain) {
+                await sendBotDeleteWebhook(storedSubdomain);
+            } else {
+                showMessage(controlMessageDiv, 'Nincs aktív alosztály a törléshez.', 'error');
+            }
+        });
+
+        function displayPanelForManagedSubdomain() {
+            requestSubdomainSection.style.display = 'none';
+            botControlSection.style.display = 'block';
+            const storedSubdomain = localStorage.getItem('currentManagedSubdomain');
+            if (storedSubdomain) {
+                subdomainDisplayElem.textContent = `${storedSubdomain}${BASE_DOMAIN}`;
+            } else {
+                subdomainDisplayElem.textContent = 'Nincs beállított alosztály';
+            }
+            fetchBotStatus();
+
+            // Amikor a panelre váltunk, ellenőrizzük a hasEnteredCode állapotát, és ennek megfelelően rejtjük/mutatjuk a vezérlőket
+            const hasEnteredCode = localStorage.getItem('hasEnteredCode');
+            if (hasEnteredCode === 'true') {
+                activationControlsDiv.classList.add('hidden-on-active'); // Rejtsd el, ha már volt kódbeírás
+            } else {
+                activationControlsDiv.classList.remove('hidden-on-active'); // Mutasd, ha még nem
+            }
+        }
+
+        // --- Kezdőbetöltési logika ---
+        document.addEventListener('DOMContentLoaded', () => {
+            updateDomainPreview();
+
+            const hasEnteredCode = localStorage.getItem('hasEnteredCode');
+            const storedSubdomain = localStorage.getItem('currentManagedSubdomain');
+
+            // Ha van már mentett alosztály, akkor mutassuk a bot vezérlő panelt
+            // Függetlenül attól, hogy a kódot már beírták-e vagy sem (az a displayPanelForManagedSubdomain dönti el)
+            if (storedSubdomain) {
+                displayPanelForManagedSubdomain();
+            } else {
+                // Ha nincs mentett alosztály, mutassuk az alosztály igénylő részt
+                requestSubdomainSection.style.display = 'block';
+                botControlSection.style.display = 'none';
+            }
+        });
+    </script>
+</body>
+</html>
