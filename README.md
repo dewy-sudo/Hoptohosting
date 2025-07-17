@@ -1,54 +1,5 @@
-<!DOCTYPE html>
-<html lang="hu">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Karbantartás Alatt</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
-            color: #333;
-            text-align: center;
-            padding: 50px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            margin: 0;
-        }
-        .container {
-            background-color: #fff;
-            padding: 30px 50px;
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            max-width: 600px;
-            width: 90%;
-        }
-        h1 {
-            color: #007bff;
-            margin-bottom: 20px;
-        }
-        p {
-            font-size: 1.1em;
-            line-height: 1.6;
-        }
-        .footer {
-            margin-top: 30px;
-            font-size: 0.9em;
-            color: #777;
-        }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <h1>Karbantartás Alatt</h1>
-        <p>Elnézést kérünk az esetleges kellemetlenségekért! Jelenleg karbantartási munkálatokat végzünk az oldalon, hogy még jobbá tegyük.</p>
-        <p>Kérjük, térjen vissza hamarosan!</p>
-        <p>Köszönjük a türelmét és megértését.</p>
-    </div>
-    <div class="footer">
-        </div>
-</body>
-</html>
+Hopto - Karbantartás!
+
+Sajálattal közöljük de jelenleg karbantartást végzünk!
+
+Térj vissza pár óra mulva!
